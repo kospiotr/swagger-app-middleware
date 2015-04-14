@@ -1,0 +1,30 @@
+{
+  "name": "swagger-app-middleware",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "body-parser": "^1.12.2",
+    "chai": "^2.2.0",
+    "chai-http": "^1.0.0",
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-release": "^0.12.0",
+    "intern": "^2.2.2",
+    "mocha": "^2.2.1",
+    "portfinder": "^0.4.0",
+    "q": "^1.2.0"
+  },
+  "dependencies": {
+    "express": "~4.0.0",
+    "lodash": "^3.0.0",
+    "swagger-schema-official": "^2.0.0-a33091a",
+    "z-schema": "^3.9.1"
+  },
+  "scripts": {
+    "test": "mocha test"
+  }
+}

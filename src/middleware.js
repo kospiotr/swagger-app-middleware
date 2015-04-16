@@ -8,6 +8,8 @@ var specBuilder = require('./builders/specBuilder');
 var handlerHoster = require('./hosters/handlerHoster');
 var specHoster = require('./hosters/specHoster');
 var swaggerUiMiddleware = require('swagger-ui-middleware');
+var bodyParser = require('body-parser');
+
 var currentDir = __dirname;
 //var debugHoster = require('./hosters/debugHoster');
 
@@ -52,6 +54,10 @@ var App = function (config) {
     this.operationHandlers = handlerBuilder.buildOperationHandlers(this.context, this.config);
 
     this.hostApp = function (expressApp) {
+
+        expressApp.use(bodyParser.json());       // to support JSON-encoded bodies
+        expressApp.use(bodyParser.urlencoded({extended: true})); // to support URL-encoded bodies
+        
         handlerHoster.hostHandlers(expressApp, me.operationHandlers, me.config);
         specHoster.hostSpec(expressApp, this.spec, this.config.specPath);
         if (this.config.hostUi) {

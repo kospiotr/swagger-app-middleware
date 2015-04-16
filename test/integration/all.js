@@ -1,6 +1,7 @@
 define([
-    './handlerTest',
+    './hostersTest',
     './exceptionHandlerTest',
     './methodHandlerTest',
-    './buildingAppTest'
+    './buildingAppTest',
+    './specHostTest'
 ]);

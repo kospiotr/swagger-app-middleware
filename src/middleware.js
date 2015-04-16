@@ -6,7 +6,7 @@ var handlerBuilder = require('./builders/handlerBuilder');
 var specBuilder = require('./builders/specBuilder');
 
 var handlerHoster = require('./hosters/handlerHoster');
-//var specHoster = require('./hosters/specHoster');
+var specHoster = require('./hosters/specHoster');
 //var uiHoster = require('./hosters/uiHoster');
 //var debugHoster = require('./hosters/debugHoster');
 
@@ -51,7 +51,7 @@ var App = function (config) {
 
     this.hostApp = function (expressApp) {
         handlerHoster.hostHandlers(expressApp, me.operationHandlers, me.config);
-        //specHoster.hostSpec(expressApp, this.spec, this.config.specPath);
+        specHoster.hostSpec(expressApp, this.spec, this.config.specPath);
         //if (config.hostUi) {
         //    uiHoster.hostUi(expressApp, this.config.uiPath, this.config.specPath);
         //}

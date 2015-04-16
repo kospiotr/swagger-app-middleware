@@ -1,17 +1,13 @@
 var _ = require('lodash');
 
+var allowedMethods = ['get', 'post', 'put', 'delete'];
 
 var handleOperation = function (app, method, path, callback) {
-    if (method === 'get') {
-        app.get(path, callback);
-    } else if (method === 'post') {
-        app.post(path, callback);
-    } else if (method === 'put') {
-        app.put(path, callback);
-    } else if (method === 'delete') {
-        app.delete(path, callback);
+    if (_.includes(allowedMethods, method)) {
+        console.log(app[method]);
+        app[method].apply(null, [path, callback]);
     } else {
-        throw 'Unhandled method type: ' + method;
+        throw 'Unknow method type: ' + method;
     }
 };
 

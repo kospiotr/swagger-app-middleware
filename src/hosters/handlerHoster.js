@@ -4,8 +4,9 @@ var allowedMethods = ['get', 'post', 'put', 'delete'];
 
 var handleOperation = function (app, method, path, callback) {
     if (_.includes(allowedMethods, method)) {
-        console.log(app[method]);
-        app[method].apply(null, [path, callback]);
+        //console.log("method: " + method);
+        //console.log("path: " + path);
+        app[method].apply(app, [path, callback]);
     } else {
         throw 'Unknow method type: ' + method;
     }

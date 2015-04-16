@@ -8,19 +8,18 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // to support URL-encoded bodies
 
-var swaggerAppMiddleware = new swagger.App({
-        spec: {
-            //"host": "localhost:8080",
-            paths: _.merge(
-                requireDir("./paths")
-            ),
-            definitions: _.merge(
-                requireDir("./models")
-            )
-        },
-        debug: true
-    }
+var config = {
+    spec: {
+        paths: _.merge(_.values(requireDir("./paths"))[0]),
+
+        definitions: _.merge(_.values(requireDir("./models")))
+    },
+    debug: true
+};
+//console.log(config.spec.paths);
+var swaggerAppMiddleware = new swagger.App(config
 );
+//console.log(requireDir("./paths"));
 
 swaggerAppMiddleware.hostApp(app);
 

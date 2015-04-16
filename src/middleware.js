@@ -7,7 +7,8 @@ var specBuilder = require('./builders/specBuilder');
 
 var handlerHoster = require('./hosters/handlerHoster');
 var specHoster = require('./hosters/specHoster');
-//var uiHoster = require('./hosters/uiHoster');
+var swaggerUiMiddleware = require('swagger-ui-middleware');
+var currentDir = __dirname;
 //var debugHoster = require('./hosters/debugHoster');
 
 var defaultConfigValues = {
@@ -18,7 +19,6 @@ var defaultConfigValues = {
             "version": "1.0.0",
             "title": "Sample swagger based app"
         },
-        "host": 'http://localhost:8080',
         "basePath": "/api",
         "schemes": [
             "http"
@@ -26,8 +26,6 @@ var defaultConfigValues = {
         paths: {}
 
     },
-    specPath: "/spec.json",
-    uiPath: '/api-doc',
     unhandledOperationExceptionHandler: function (req, res) {
         res.status(404);
         res.send({msg: 'Unhandled operation'});
@@ -36,12 +34,16 @@ var defaultConfigValues = {
         res.status(404);
         res.send({msg: 'Action Exception occured', e: e});
     },
+    specPath: "/spec.json",
+    uiPath: '/api-doc',
+    hostUi: true,
+    uiOverridePath: currentDir + '/swagger-ui',
     debug: false
 };
 
 var App = function (config) {
     var me = this;
-    this.config = _.merge({},defaultConfigValues, config);
+    this.config = config = _.merge({}, defaultConfigValues, config);
 
     this.context = _.cloneDeep(this.config.spec);
     this.spec = specBuilder.buildSpec(this.context);
@@ -52,10 +54,11 @@ var App = function (config) {
     this.hostApp = function (expressApp) {
         handlerHoster.hostHandlers(expressApp, me.operationHandlers, me.config);
         specHoster.hostSpec(expressApp, this.spec, this.config.specPath);
-        //if (config.hostUi) {
-        //    uiHoster.hostUi(expressApp, this.config.uiPath, this.config.specPath);
-        //}
-        if (config.debug) {
+        if (this.config.hostUi) {
+            console.log('Hosting UI: ' + this.config.uiOverridePath);
+            swaggerUiMiddleware.hostUI(expressApp, {path: this.config.uiPath, overrides: this.config.uiOverridePath});
+        }
+        if (this.config.debug) {
             expressApp.get("/debug", function (req, res) {
                 res.json(me);
             });

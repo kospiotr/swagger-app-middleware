@@ -26,7 +26,7 @@ define(function (require) {
                 ).hostApp({});
                 expect.fail('app should not be build');
             } catch (e) {
-                expect(e).is.eql('Unhandled method type: head');
+                expect(e).is.eql('Unknow method type: head');
             }
         }
 

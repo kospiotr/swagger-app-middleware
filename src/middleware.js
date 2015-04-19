@@ -2,6 +2,7 @@ var _ = require('lodash');
 
 //var specValidator = require('./validators/specValidator');
 
+var logger = require('winston');
 var handlerBuilder = require('./builders/handlerBuilder');
 var specBuilder = require('./builders/specBuilder');
 
@@ -54,14 +55,13 @@ var App = function (config) {
     this.operationHandlers = handlerBuilder.buildOperationHandlers(this.context, this.config);
 
     this.hostApp = function (expressApp) {
-
         expressApp.use(bodyParser.json());       // to support JSON-encoded bodies
         expressApp.use(bodyParser.urlencoded({extended: true})); // to support URL-encoded bodies
-        
+
         handlerHoster.hostHandlers(expressApp, me.operationHandlers, me.config);
         specHoster.hostSpec(expressApp, this.spec, this.config.specPath);
         if (this.config.hostUi) {
-            console.log('Hosting UI: ' + this.config.uiOverridePath);
+            //logger.debug('Hosting UI: ' + this.config.uiOverridePath);
             swaggerUiMiddleware.hostUI(expressApp, {path: this.config.uiPath, overrides: this.config.uiOverridePath});
         }
         if (this.config.debug) {

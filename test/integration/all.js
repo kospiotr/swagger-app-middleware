@@ -3,5 +3,7 @@ define([
     './exceptionHandlerTest',
     './methodHandlerTest',
     './buildingAppTest',
-    './specHostTest'
+    './specHostTest',
+    './parameterMethodSourceTest'
+
 ]);

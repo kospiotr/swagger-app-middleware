@@ -20,9 +20,11 @@
     "swagger-ui": "^2.1.0-M2"
   },
   "dependencies": {
-    "express": "~4.0.0",
     "body-parser": "^1.12.2",
+    "express": "~4.0.0",
     "lodash": "^3.0.0",
+    "swagger-ui-middleware": "^1.0.0",
+    "winston": "^1.0.0",
     "z-schema": "^3.9.1"
   },
   "scripts": {

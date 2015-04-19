@@ -3,6 +3,7 @@ var _ = require('lodash');
 var express = require('express');
 var app = express();
 var swagger = require('../../index.js');
+var logger = require('intern/dojo/node!winston');
 
 var swaggerAppMiddleware = new swagger.App({
         spec: {
@@ -16,10 +17,9 @@ var swaggerAppMiddleware = new swagger.App({
 swaggerAppMiddleware.hostApp(app);
 
 app.get('/test', function (req, res) {
-    console.log('hitting test');
+    logger.debug('hitting test');
     res.json({status: 'ok'});
 });
 
-console.log('app started');
+logger.debug('app started');
 module.exports = app;
-

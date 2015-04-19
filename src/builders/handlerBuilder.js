@@ -1,4 +1,7 @@
 var _ = require('lodash');
+var parameterExtractor = require('./parameterExtractor');
+var parameterConverter = require('./parameterConverter');
+var logger = require('winston');
 
 /**
  * Flatterns paths into operations
@@ -62,12 +65,20 @@ var flatternOperations = function (paths) {
 var buildActionHandlerForOperation = function (actionHandler, operation, actionExceptionHandler) {
     return function (req, res) {
         try {
-            res.json(actionHandler());
+            var actionInputParameters = parameterExtractor.extractInputParameters(req, operation.parameters);
+            //var actionInputParameters = parameterConverter.convertInputParameters(actionInputParameters, operation.parameters);
+            var meta = {req: req, res: res, operation: operation};
+            var inputParameters = _.merge([], actionInputParameters, meta);
+            var actionResult = actionHandler.apply(actionHandler, inputParameters);
+            logger.debug('Result %j', actionResult);
+            res.json(actionResult);
         }catch(e){
+            logger.debug('Exception', e);
             actionExceptionHandler(e,req,res);
         }
     };
 };
+
 var buildHandlerForOperation = function (operation, config) {
     var requestHandler = operation['$requestHandler'];
     if(_.isFunction(requestHandler)){
@@ -84,20 +95,32 @@ var buildHandlerForOperation = function (operation, config) {
     return config.unhandledOperationExceptionHandler;
 };
 
+/**
+ * Converts Swagger PATH templates /{path} into ExpressJS: /:path
+ * @param path
+ * @param method
+ */
+var convertPathFromSwaggerToExpress = function (path) {
+    return path.replace(/{(.*?)}/g,":$1");
+};
+
 var buildOperationHandlers = function (spec, config) {
     var out = [];
     var operations = flatternOperations(spec.paths);
     _.forEach(operations, function (operation) {
-        out.push({
-            path: spec.basePath + operation.path,
+        var operationHandler = {
+            path: spec.basePath + convertPathFromSwaggerToExpress(operation.path),
             method: operation.method,
             handler: buildHandlerForOperation(operation, config)
-        });
+        };
+        logger.debug('Operation handling', operationHandler);
+        out.push(operationHandler);
     });
     return out;
 };
 
 module.exports = {
     buildOperationHandlers: buildOperationHandlers,
-    flatternOperations: flatternOperations
+    flatternOperations: flatternOperations,
+    convertPathFromSwaggerToExpress: convertPathFromSwaggerToExpress
 };

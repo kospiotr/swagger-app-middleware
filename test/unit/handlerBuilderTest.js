@@ -30,13 +30,20 @@ define(function (require) {
                         }
                     }
                 );
-                console.log(result);
                 expect(result).to.have.deep.property('[0].path', '/pets');
                 expect(result).to.have.deep.property('[0].method', 'get');
                 expect(result).to.have.deep.property('[0].summary', 'get pets');
                 expect(result).to.have.deep.property('[1].path', '/toys');
                 expect(result).to.have.deep.property('[1].method', 'get');
                 expect(result).to.have.deep.property('[1].summary', 'get toys');
+            },
+            'shouldConvertPathFromSwaggerToExpressSimple': function () {
+                var result = instance.convertPathFromSwaggerToExpress("/{path}");
+                expect(result).to.eql('/:path');
+            },
+            'shouldConvertPathFromSwaggerToExpressComplex': function () {
+                var result = instance.convertPathFromSwaggerToExpress("/user/{uid}/photos/{file}");
+                expect(result).to.eql('/user/:uid/photos/:file');
             }
         }
     );

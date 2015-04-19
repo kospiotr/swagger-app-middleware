@@ -43,7 +43,6 @@ define(function (require) {
                         "version": "1.0.0"
                     },
                     "basePath": "/api",
-                    "host": "http://localhost:8080",
                     "paths": {
                         "/actionHandler": {
                             "get": {

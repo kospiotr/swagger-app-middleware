@@ -3,7 +3,9 @@ define(function (require) {
     var tester = require('../lib/restServerTester');
     var chai = tester.chai;
     var expect = chai.expect;
+    var express = require('intern/dojo/node!express');
     var swagger = require('intern/dojo/node!../../index');
+    var app = express();
 
     suite({
         'should not build app if unsupported method of operation is given': function () {
@@ -23,7 +25,7 @@ define(function (require) {
                             }
                         }
                     }
-                ).hostApp({});
+                ).hostApp(app);
                 expect.fail('app should not be build');
             } catch (e) {
                 expect(e).is.eql('Unknow method type: head');

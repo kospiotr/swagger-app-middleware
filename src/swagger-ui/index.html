@@ -76,7 +76,7 @@
 
       function log() {
         if ('console' in window) {
-          console.log.apply(console, arguments);
+          logger.debug.apply(console, arguments);
         }
       }
   });

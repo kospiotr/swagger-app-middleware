@@ -12,6 +12,11 @@ module.exports = function (grunt) {
                 reporters: ['console', 'lcovhtml', 'cobertura'],
                 grep: grunt.option('grep') ? grunt.option('grep') : '.*'
             },
+            test_all: {
+                options: {
+                    suites: ['test/unit/all','test/integration/all']
+                }
+            },
             test_unit: {
                 options: {
                     suites: ['test/unit/all']
@@ -42,7 +47,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('intern');
 
-    grunt.registerTask('test', ['clean:coverage', 'intern']);
+    grunt.registerTask('test', ['clean:coverage', 'intern:test_all']);
     grunt.registerTask('test-unit', ['clean:coverage', 'intern:test_unit']);
     grunt.registerTask('testing-unit', ['watch:test_unit']);
     grunt.registerTask('test-integration', ['clean:coverage', 'intern:test_integration']);

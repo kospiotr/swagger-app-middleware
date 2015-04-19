@@ -46,7 +46,7 @@ var defaultConfigValues = {
 
 var App = function (config) {
     var me = this;
-    this.config = config = _.merge({}, defaultConfigValues, config);
+    this.config = _.merge({}, defaultConfigValues, config);
 
     this.context = _.cloneDeep(this.config.spec);
     this.spec = specBuilder.buildSpec(this.context);
@@ -54,6 +54,7 @@ var App = function (config) {
 
     this.operationHandlers = handlerBuilder.buildOperationHandlers(this.context, this.config);
 
+    logger.debug("Build operation handlers", this.operationHandlers);
     this.hostApp = function (expressApp) {
         expressApp.use(bodyParser.json());       // to support JSON-encoded bodies
         expressApp.use(bodyParser.urlencoded({extended: true})); // to support URL-encoded bodies

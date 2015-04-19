@@ -9,7 +9,7 @@ define(function (require) {
     var app = express();
 
 
-    //logger.level = 'debug';
+    logger.level = 'debug';
 
     var operation = {
         "parameters": [
@@ -65,25 +65,28 @@ define(function (require) {
         'setup': tester.init(app),
         'teardown': tester.destroy(),
         'should extract parameters from get method': function () {
-            return tester.get('/api/path/action?query=query', {msg: 'body'}, [{key: 'header', value: 'header'}], function (res) {
+            return tester.get('/api/path/action?query=query', {msg: 'body'}, [{
+                key: 'header',
+                value: 'header'
+            }], function (res) {
                 expect(res).to.have.status(200);
                 expect(res.body).is.eql(actionResponse)
             });
         },
         'should extract parameters from post method': function () {
-            return tester.post('/api/path/action?query=query', {msg: 'body'}, [{key: 'header', value: 'header'}], function (res) {
+            return tester.post('/api/path/action?query=query', {msg: 'body'}, [{
+                key: 'header',
+                value: 'header'
+            }], function (res) {
                 expect(res).to.have.status(200);
                 expect(res.body).is.eql(actionResponse)
             });
         },
         'should extract parameters from put method': function () {
-            return tester.put('/api/path/action?query=query', {msg: 'body'}, [{key: 'header', value: 'header'}], function (res) {
-                expect(res).to.have.status(200);
-                expect(res.body).is.eql(actionResponse)
-            });
-        },
-        'should extract parameters from delete method': function () {
-            return tester.delete('/api/path/action?query=query', {msg: 'body'}, [{key: 'header', value: 'header'}], function (res) {
+            return tester.put('/api/path/action?query=query', {msg: 'body'}, [{
+                key: 'header',
+                value: 'header'
+            }], function (res) {
                 expect(res).to.have.status(200);
                 expect(res.body).is.eql(actionResponse)
             });

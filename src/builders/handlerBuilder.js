@@ -65,15 +65,18 @@ var flatternOperations = function (paths) {
 var buildActionHandlerForOperation = function (actionHandler, operation, actionExceptionHandler) {
     return function (req, res) {
         try {
+            logger.debug('Handling operation: [' + operation.method + '] ' + operation.path);
             var actionInputParameters = parameterExtractor.extractInputParameters(req, operation.parameters);
-            //var actionInputParameters = parameterConverter.convertInputParameters(actionInputParameters, operation.parameters);
+            logger.debug('Extracted parameters: ', actionInputParameters);
+            var actionInputParameters = parameterConverter.convertParameterObjects(actionInputParameters, operation.parameters);
+            logger.debug('Converted parameters: ', actionInputParameters);
             var meta = {req: req, res: res, operation: operation};
             var inputParameters = _.merge([], actionInputParameters, meta);
             var actionResult = actionHandler.apply(actionHandler, inputParameters);
-            logger.debug('Result %j', actionResult);
+            logger.debug('Action result', actionResult);
             res.json(actionResult);
         }catch(e){
-            logger.debug('Exception', e);
+            logger.debug('Action exception', e);
             actionExceptionHandler(e,req,res);
         }
     };
@@ -113,7 +116,6 @@ var buildOperationHandlers = function (spec, config) {
             method: operation.method,
             handler: buildHandlerForOperation(operation, config)
         };
-        logger.debug('Operation handling', operationHandler);
         out.push(operationHandler);
     });
     return out;

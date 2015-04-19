@@ -4,6 +4,7 @@ define([
     './methodHandlerTest',
     './buildingAppTest',
     './specHostTest',
-    './parameterMethodSourceTest'
+    './parameterMethodExtractorTest',
+    './parameterMethodConverterTest'
 
 ]);

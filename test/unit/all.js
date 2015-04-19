@@ -1,3 +1,6 @@
 define([
-    './handlerBuilderTest.js'
+    './handlerBuilderTest',
+    './parameterExtractorTest',
+    './arrayTransformatorTest',
+    './parameterConverterTest'
 ]);

@@ -240,6 +240,14 @@ define(function (require) {
                     multi: ['m', 'u', 'l', 't', 'i']
                 })
             });
+        },
+        'should convert single multi array': function () {
+            return tester.get('/api/defaultArrayConvert?multi=a', function (res) {
+                expect(res).to.have.status(200);
+                expect(res.body).is.eql({
+                    multi: ['a']
+                })
+            });
         }
 
     });

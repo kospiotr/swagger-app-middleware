@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var parameterExtractor = require('./parameterExtractor');
 var parameterConverter = require('./parameterConverter');
+var parameterValidator = require('./parameterValidator');
+var schemaValidator = require('../schema/schemaValidator');
 var logger = require('winston');
 
 /**
@@ -67,9 +69,18 @@ var buildActionHandlerForOperation = function (actionHandler, operation, actionE
         try {
             logger.debug('Handling operation: [' + operation.method + '] ' + operation.path);
             var actionInputParameters = parameterExtractor.extractInputParameters(req, operation.parameters);
-            logger.debug('Extracted parameters: ', actionInputParameters);
+            logger.debug('Extracted parameters', actionInputParameters);
             var actionInputParameters = parameterConverter.convertParameterObjects(actionInputParameters, operation.parameters);
-            logger.debug('Converted parameters: ', actionInputParameters);
+            logger.debug('Converted parameters', actionInputParameters);
+
+            var validationErrors = parameterValidator.getParameterObjectsValidationErrors(actionInputParameters, operation);
+            logger.debug('Validation errors', actionInputParameters);
+            if(validationErrors.length > 0){
+                throw {
+                    msg: 'Validation exception',
+                    errors: validationErrors
+                }                
+            }
             var meta = {req: req, res: res, operation: operation};
             var inputParameters = _.merge([], actionInputParameters, meta);
             var actionResult = actionHandler.apply(actionHandler, inputParameters);
@@ -111,6 +122,10 @@ var buildOperationHandlers = function (spec, config) {
     var out = [];
     var operations = flatternOperations(spec.paths);
     _.forEach(operations, function (operation) {
+
+        _.forEach(operation.parameters, function(parameter){
+            parameter.$validator = parameter.$validator ? parameter.$validator : parameterValidator.createValidatorForParameters(parameter, spec);
+        });
         var operationHandler = {
             path: spec.basePath + convertPathFromSwaggerToExpress(operation.path),
             method: operation.method,

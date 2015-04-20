@@ -92,7 +92,11 @@ var convertArray = function (value, parameterSpec) {
 
     var array = [];
     if (collectionFormat === 'multi')  {
-        array = value;
+        if(_.isArray(value)) {
+            array = value;
+        }else{
+            array = [value];
+        }
     } else {
         array = arrayTransformator.split(value, collectionFormat);
     }

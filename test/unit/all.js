@@ -2,5 +2,6 @@ define([
     './handlerBuilderTest',
     './parameterExtractorTest',
     './arrayTransformatorTest',
-    './parameterConverterTest'
+    './parameterConverterTest',
+    './parameterValidatorTest'
 ]);

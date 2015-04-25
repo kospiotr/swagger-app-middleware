@@ -16,7 +16,7 @@ define(function (require) {
                             paths: {
                                 "/unsuportedMethodHandler": {
                                     "head": {
-                                        '$action': function (meta) {
+                                        '$actionHandler': function (meta) {
                                             return {msg: "headActionOperation"}
                                         }
                                     }
@@ -28,7 +28,7 @@ define(function (require) {
                 ).hostApp(app);
                 expect.fail('app should not be build');
             } catch (e) {
-                expect(e).is.eql('Unknow method type: head');
+                expect(e.toString()).is.eql('Unknow method type: head');
             }
         }
 

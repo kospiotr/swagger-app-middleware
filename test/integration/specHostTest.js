@@ -37,7 +37,7 @@ define(function (require) {
             return tester.get('/spec.json', function (res) {
                 expect(res).to.have.status(200);
                 expect(res.body).is.eql({
-                    "swagger": "2.0",
+                    "swagger": 2.0,
                     "info": {
                         "title": "Sample swagger based app",
                         "version": "1.0.0"

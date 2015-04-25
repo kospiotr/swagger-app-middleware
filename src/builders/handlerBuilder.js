@@ -2,7 +2,7 @@ var _ = require('lodash');
 var parameterExtractor = require('./parameterExtractor');
 var parameterConverter = require('./parameterConverter');
 var parameterValidator = require('./parameterValidator');
-var schemaValidator = require('../schema/schemaValidator');
+var schemaValidator = require('../validation/schemaValidator');
 var logger = require('winston');
 
 /**

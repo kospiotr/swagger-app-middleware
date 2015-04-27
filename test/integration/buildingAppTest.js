@@ -30,6 +30,29 @@ define(function (require) {
             } catch (e) {
                 expect(e.toString()).is.eql('Unknow method type: head');
             }
+        },
+        'should not build app if spec is not valid': function () {
+            try {
+                new swagger.App(
+                    {
+                        spec: {
+                            patherss: {
+                                "/unsuportedMethodHandler": {
+                                    "get": {
+                                        '$actionHandler': function (meta) {
+                                            return {msg: "headActionOperation"}
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                ).hostApp(app);
+                expect.fail('app should not be build');
+            } catch (e) {
+                expect(e.toString()).is.eql('Error: Validation exception');
+            }
         }
 
     });

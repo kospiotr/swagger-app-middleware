@@ -30,7 +30,10 @@ define(function (require) {
             },
             {
                 "name": "body",
-                "in": "body"
+                "in": "body",
+                "schema": {
+
+                }
             }
 
         ],
@@ -58,8 +61,7 @@ define(function (require) {
             },
             debug: true
         }
-    )
-        .hostApp(app);
+    ).hostApp(app);
 
     suite({
         'setup': tester.init(app),

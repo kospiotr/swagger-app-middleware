@@ -10,20 +10,17 @@ var _ = require('lodash'),
     fs = require('fs'),
     currentDir = __dirname;
 
-var util = require('util');
-
 var validateSwaggerSchema = function (data, specSchemaPath) {
     var specSchemaAsString = fs.readFileSync(specSchemaPath, 'utf8');
     var schema = JSON.parse(specSchemaAsString);
 
-    //console.log(util.inspect(data, false, null));
     schemaValidator.validateSchema(data, schema);
 };
 
 var defaultConfigValues = {
     spec: {
 
-        "swagger": 2.0,
+        "swagger": "2.0",
         "info": {
             "version": "1.0.0",
             "title": "Sample swagger based app"
@@ -72,7 +69,6 @@ var App = function (config) {
         handlerHoster.hostHandlers(expressApp, me.operationHandlers, me.config);
         specHoster.hostSpec(expressApp, me.spec, me.config.specPath);
         if (me.config.hostUi) {
-            //logger.debug('Hosting UI: ' + me.config.uiOverridePath);
             swaggerUiMiddleware.hostUI(expressApp, {path: me.config.uiPath, overrides: me.config.uiOverridePath});
         }
         if (me.config.debug) {

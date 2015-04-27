@@ -3,5 +3,6 @@ define([
     './parameterExtractorTest',
     './arrayTransformatorTest',
     './parameterConverterTest',
-    './parameterValidatorTest'
+    './parameterValidatorTest',
+    './parameterDefaulterTest'
 ]);

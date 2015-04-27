@@ -2,6 +2,7 @@ var _ = require('lodash');
 var parameterExtractor = require('./parameterExtractor');
 var parameterConverter = require('./parameterConverter');
 var parameterValidator = require('./parameterValidator');
+var parameterDefaulter = require('./parameterDefaulter');
 var schemaValidator = require('../validation/schemaValidator');
 var logger = require('winston');
 
@@ -68,23 +69,31 @@ var buildActionHandlerForOperation = function (actionHandler, operation, actionE
     return function (req, res) {
         try {
             logger.debug('Handling operation: [' + operation.method + '] ' + operation.path);
-            var actionInputParameters = parameterExtractor.extractInputParameters(req, operation.parameters);
-            logger.debug('Extracted parameters', actionInputParameters);
-            var actionInputParameters = parameterConverter.convertParameterObjects(actionInputParameters, operation.parameters);
-            logger.debug('Converted parameters', actionInputParameters);
 
-            var validationErrors = parameterValidator.getParameterObjectsValidationErrors(actionInputParameters, operation);
-            logger.debug('Validation errors', actionInputParameters);
+            var extractedParameters = parameterExtractor.extractInputParameters(req, operation.parameters);
+            logger.debug('Extracted parameters', extractedParameters);
+
+            var convertedParameters = parameterConverter.convertParameterObjects(extractedParameters, operation.parameters);
+            logger.debug('Converted parameters', convertedParameters);
+
+            var defaultedParameters = parameterDefaulter.getDefaultedParameters(convertedParameters, operation.parameters);
+            logger.debug('Defaulted parameters', defaultedParameters);
+
+            var validationErrors = parameterValidator.getParameterObjectsValidationErrors(defaultedParameters, operation);
+            logger.debug('Validation errors', defaultedParameters);
+
             if(validationErrors.length > 0){
                 throw {
                     msg: 'Validation exception',
                     errors: validationErrors
                 }                
             }
+
             var meta = {req: req, res: res, operation: operation};
-            var inputParameters = _.merge([], actionInputParameters, meta);
+            var inputParameters = _.merge([], defaultedParameters, meta);
             var actionResult = actionHandler.apply(actionHandler, inputParameters);
             logger.debug('Action result', actionResult);
+
             res.json(actionResult);
         }catch(e){
             logger.debug('Action exception', e);

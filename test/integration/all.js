@@ -5,6 +5,7 @@ define([
     './buildingAppTest',
     './specHostTest',
     './parameterMethodExtractorTest',
-    './parameterMethodConverterTest'
+    './parameterMethodConverterTest',
+    './parameterDefaulterTest'
 
 ]);

@@ -14,7 +14,13 @@ var validateSwaggerSchema = function (data, specSchemaPath) {
     var specSchemaAsString = fs.readFileSync(specSchemaPath, 'utf8');
     var schema = JSON.parse(specSchemaAsString);
 
-    schemaValidator.validateSchema(data, schema);
+    try {
+        schemaValidator.validateSchema(data, schema);
+    } catch (e) {
+        logger.error(JSON.stringify(e, null, 2));
+        console.trace(e);
+        throw e;
+    }
 };
 
 var defaultConfigValues = {

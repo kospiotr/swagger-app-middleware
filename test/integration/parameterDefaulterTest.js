@@ -41,55 +41,54 @@ define(function (require) {
                                 };
                             }
                         }
+                    },
+                    "/action": {
+                        "get": {
+                            "parameters": [
+                                {
+                                    "name": "undef",
+                                    "in": "query",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "def",
+                                    "in": "query",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "defDefault",
+                                    "in": "query",
+                                    "type": "string",
+                                    "default": "def"
+                                },
+                                {
+                                    "name": "undefDefault",
+                                    "in": "query",
+                                    "type": "string",
+                                    "default": "def"
+                                }
+
+                            ],
+                            '$actionHandler': function (undef, def, defDefault, undefDefault) {
+                                return {undef: undef, def: def, defDefault: defDefault, undefDefault: undefDefault}
+                            }
+                        }
                     }
-                    //"/action": {
-                    //    "get": {
-                    //        "parameters": [
-                    //            {
-                    //                "name": "query",
-                    //                "in": "undef",
-                    //                //"type": "string"
-                    //            },
-                    //        //    {
-                    //        //        "name": "query",
-                    //        //        "in": "def",
-                    //        //        "type": "string"
-                    //        //    },
-                    //        //    {
-                    //        //        "name": "query",
-                    //        //        "in": "defDefault",
-                    //        //        "type": "string"
-                    //        //        //"default": "def"
-                    //        //    },
-                    //        //    {
-                    //        //        "name": "query",
-                    //        //        "in": "undefDefault",
-                    //        //        "type": "string"
-                    //        //        //"default": "def"
-                    //        //    }
-                    //        //
-                    //        ],
-                    //        '$actionHandler': function (undef, def, defDefault, undefDefault) {
-                    //            return {undef: undef, def: def, defDefault: defDefault, undefDefault: undefDefault}
-                    //        }
-                    //    }
-                    //}
                 }
             },
             debug: true
         }
-    )
-        .hostApp(app);
+    ).hostApp(app);
 
     suite({
         'setup': tester.init(app),
         'teardown': tester.destroy(),
         'should be good': function () {
-            return tester.get('/api/action?undef=undefV&def=defV&defDefault=defDefaultV&undefDefault=undefDefaultV', function (res) {
-                //expect(res).to.have.status(200);
-                //expect(res.body).is.eql({
-                //    undef: "undefV", def: "defV", defDefault: "defDefaultV", undefDefault: "undefDefaultV"
-                //})
+            return tester.get('/api/action?def=defV&defDefault=defDefaultV', function (res) {
+                expect(res).to.have.status(200);
+                expect(res.body).is.eql({
+                    def: "defV", defDefault: "defDefaultV", undefDefault: "def"
+                })
             });
         }
     });

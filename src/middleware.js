@@ -18,7 +18,6 @@ var validateSwaggerSchema = function (data, specSchemaPath) {
         schemaValidator.validateSchema(data, schema);
     } catch (e) {
         logger.error(JSON.stringify(e, null, 2));
-        console.trace(e);
         throw e;
     }
 };

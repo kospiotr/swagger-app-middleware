@@ -4,7 +4,7 @@ define(function (require) {
     var expect = require('intern/chai!expect');
     var logger = require('intern/dojo/node!winston');
 
-    logger.level = 'debug';
+    //logger.level = 'debug';
 
     suite({
         'should return undefind when undefined and no default value': function () {

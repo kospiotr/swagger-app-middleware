@@ -9,7 +9,7 @@ define(function (require) {
     var app = express();
 
 
-    logger.level = 'info';
+    //logger.level = 'info';
 
     var actionResponse = {path: "path", query: "query", header: "header", body: "body"};
     new swagger.App(

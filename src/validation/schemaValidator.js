@@ -15,7 +15,6 @@ var validateSchema = function (data, schemas) {
 
     var errors = validator.getLastErrors();
     if (!valid) {
-        logger.error("schema errors: %o", errors);
         throw new ValidationError(errors);
 
     }

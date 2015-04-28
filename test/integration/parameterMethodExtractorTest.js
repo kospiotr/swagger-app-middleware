@@ -9,7 +9,7 @@ define(function (require) {
     var app = express();
 
 
-    logger.level = 'debug';
+    //logger.level = 'debug';
 
     var operation = {
         "parameters": [

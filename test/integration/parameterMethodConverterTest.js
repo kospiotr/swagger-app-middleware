@@ -202,7 +202,7 @@ define(function (require) {
         'setup': tester.init(app),
         'teardown': tester.destroy(),
         'should convert simple types': function () {
-            return tester.get('/api/simpleConvert?integer=12345&long=4321&float=123.456&double=654.321&string=string&long=4321&byte=123&bool=true&date=2014-03-02&dateTime=2014-03-02T23:59:01&password=abcde', function (res) {
+            return tester.get('/api/simpleConvert?integer=12345&long=4321&float=123.456&double=654.321&string=string&long=4321&byte=123&bool=true&date=2014-03-02&dateTime=2014-03-02T23:59:01-05:00&password=abcde', function (res) {
                 expect(res).to.have.status(200);
                 var out = {
                     integer: 12345,
@@ -212,8 +212,8 @@ define(function (require) {
                     string: 'string',
                     byte: "123",
                     bool: true,
-                    date: new Date(Date.UTC(2014, 2, 2, 0, 0, 0)).toJSON(),
-                    dateTime: new Date(Date.UTC(2014, 2, 2, 23, 59, 1)).toJSON(),
+                    date: "2014-03-02",
+                    dateTime: "2014-03-02T23:59:01-05:00",
                     password: "abcde"
                 };
                 expect(res.body).is.eql(out)

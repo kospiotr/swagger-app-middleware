@@ -18,6 +18,7 @@ var validateSwaggerSchema = function (data, specSchemaPath) {
         schemaValidator.validateSchema(data, schema);
     } catch (e) {
         logger.error(JSON.stringify(e, null, 2));
+        //console.trace(e);
         throw e;
     }
 };
@@ -64,9 +65,14 @@ var App = function (config) {
 
     this.context = _.cloneDeep(this.config.spec);
     this.spec = specBuilder.buildSpec(this.context, this.config);
-    validateSwaggerSchema(this.spec, this.config.specSchemaPath);
 
+    logger.debug('Begin spec validation');
+    validateSwaggerSchema(this.spec, this.config.specSchemaPath);
+    logger.debug('Finished spec validation');
+
+    logger.debug('Begin building operation handlers');
     this.operationHandlers = handlerBuilder.buildOperationHandlers(this.context, this.config);
+    logger.debug('Finished building operation handlers');
     this.hostApp = function (expressApp) {
         expressApp.use(bodyParser.json());       // to support JSON-encoded bodies
         expressApp.use(bodyParser.urlencoded({extended: true})); // to support URL-encoded bodies

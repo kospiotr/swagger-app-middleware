@@ -131,15 +131,18 @@ var buildOperationHandlers = function (spec, config) {
     var out = [];
     var operations = flatternOperations(spec.paths);
     _.forEach(operations, function (operation) {
+        logger.debug('Begin building operation handler for ' + operation.path);
 
         _.forEach(operation.parameters, function(parameter){
-            parameter.$validator = parameter.$validator ? parameter.$validator : parameterValidator.createValidatorForParameters(parameter, spec);
+                parameter.$validator = parameter.$validator ? parameter.$validator : parameterValidator.createValidatorForParameters(parameter, spec);
+            logger.debug('Created parameter validator for ' + operation.path + ' -> ' +parameter.name);
         });
         var operationHandler = {
             path: spec.basePath + convertPathFromSwaggerToExpress(operation.path),
             method: operation.method,
             handler: buildHandlerForOperation(operation, config)
         };
+        logger.debug('Created operation handler for ' + operation.path);
         out.push(operationHandler);
     });
     return out;

@@ -9,7 +9,7 @@ define(function (require) {
     var app = express();
 
 
-    //logger.level = 'info';
+    logger.level = 'debug';
 
     new swagger.App(
         {

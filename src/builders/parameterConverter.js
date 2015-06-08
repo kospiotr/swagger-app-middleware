@@ -9,13 +9,16 @@ var convertParameterObject = function (value, parameterSpec) {
         items = parameterSpec.items,
         collectionFormat = parameterSpec.collectionFormat;
 
-    if (value === undefined) {
-        return value;
-    }
+    var out = undefined;
 
-    return inMethod === 'body' ?
-        value :
-        convertNonBodyParameterObject(value, parameterSpec);
+    if (value !== undefined) {
+        out = inMethod === 'body' ?
+            value :
+            convertNonBodyParameterObject(value, parameterSpec);
+    }
+    logger.debug('Converted parameter:', JSON.stringify(out, null, 2));
+    return out;
+
 };
 
 /**
@@ -104,6 +107,7 @@ var convertArray = function (value, parameterSpec) {
 
     for (var i = 0; i < array.length; i++) {
         array[i] = convertParameterObject(array[i], items);
+        logger.debug('Converted array value', array[i]);
     }
 
     return array;
@@ -114,8 +118,10 @@ var convertParameterObjects = function (parameterValues, parameterSpecs) {
     _.forEach(parameterSpecs, function (parameterSpec, index) {
         var value = parameterValues[index];
         var convertedValue = convertParameterObject(value, parameterSpec);
+        logger.debug('Converted value:', convertedValue);
         out.push(convertedValue);
     });
+    logger.debug('Converted parameters:', JSON.stringify(out, null, 2));
     return out;
 };
 

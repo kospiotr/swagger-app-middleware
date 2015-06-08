@@ -126,6 +126,43 @@ define(function (require) {
                     "format": "int32"
                 }
             })).to.eql([123, 456]);
+        },
+        'should convert multidimension int array': function () {
+            expect(parameterConverter.convertParameterObject("123|456,789|123,456|789", {
+                "name": "tags",
+                "in": "query",
+                "type": "array",
+                "items": {
+                    "type": "array",
+                    "collectionFormat": "pipes",
+                    "items": {
+                        "type": 'integer',
+                        "format": "int32"
+                    }
+                }
+            })).to.eql([
+                    [123, 456],
+                    [789, 123],
+                    [456, 789]
+                ]);
+        },
+        'should convert multidimension string array': function () {
+            expect(parameterConverter.convertParameterObject("123|456,789|123,456|789", {
+                "name": "tags",
+                "in": "query",
+                "type": "array",
+                "items": {
+                    "type": "array",
+                    "collectionFormat": "pipes",
+                    "items": {
+                        "type": 'string'
+                    }
+                }
+            })).to.eql([
+                    ['123', '456'],
+                    ['789', '123'],
+                    ['456', '789']
+                ]);
         }
     });
 });

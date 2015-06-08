@@ -12,6 +12,19 @@ define(function (require) {
     };
 
     suite({
+        'should validate parameter schema': function () {
+            try {
+                validate(undefined, {
+                    name: 'id',
+                    path: '/action',
+                    type: 'unknown'
+                });
+                expect.fail('should fail');
+            } catch (e) {
+                expect(e.msg).is.eql('Schema not valid for input parameter');
+            }
+        },
+
         'should pass validation when not required and value undefined': function () {
             var errors = validate(undefined, {
                 name: 'id',
@@ -32,6 +45,8 @@ define(function (require) {
             expect(errors[0].value).to.eql(undefined);
             expect(errors[0].msg).to.eql('Field is required');
         },
+
+        //--------------- simple type
 
         'should create JSON Schema for simple parameter': function () {
             var jsonSchema = parameterValidator.createJsonSchemaForSimpleValidationStrategy({
@@ -530,9 +545,51 @@ define(function (require) {
                 multipleOf: 10
             });
 
-
             expect(errors).is.not.empty;
             expect(errors[0].msg).is.eql("Value 15 is not a multiple of 10");
+        },
+
+
+        //--------------- body in type
+
+
+        'should validation pass when body in method and inline schema valid': function () {
+            var errors = validate(['abc', 'cde'], {
+                name: 'id',
+                path: '/action',
+                in: 'body',
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            });
+
+
+            expect(errors).is.empty;
+        },
+        'should validation fail when body in method and inline schema not valid': function () {
+            var errors = validate([1234, 5678], {
+                name: 'id',
+                path: '/action',
+                in: 'body',
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            });
+
+
+            expect(errors).is.not.empty;
+            expect(errors[0].msg).is.eql("Expected type string but found type integer");
         }
+
+
+        //--------------- array
+
+
     });
 });

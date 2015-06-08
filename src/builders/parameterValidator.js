@@ -7,13 +7,6 @@ var getParameterObjectsValidationErrors = function (actionInputParameters, opera
     _.forEach(operation.parameters, function (parameter, index) {
         var actionInputParameter = actionInputParameters[index];
         var validationResult = parameter.$validator(actionInputParameter);
-        if (_.isArray(validationResult)) {
-            validationResult = validationResult;
-        } else if (_.isObject(validationResult)) {
-            validationResult = [validationResult];
-        } else {
-            return;
-        }
         out = out.concat(validationResult);
     });
     return out;
@@ -25,6 +18,14 @@ var addSupportForNativeRegexp = function (out) {
     }
 };
 
+var addSupportForItemsObject = function (out) {
+    if(!_.has(out,'items')){
+        return;
+    }
+
+
+
+};
 /**
  * Creates JSON Schema for simple strategy (non JSON Schema or non query speciffic strategies)
  * This method will allow to use JSON Schema validation engine for validating simple values
@@ -33,7 +34,6 @@ var addSupportForNativeRegexp = function (out) {
  */
 var createJsonSchemaForSimpleValidationStrategy = function (parameterSpec) {
     var allowdedSimpleValidationProperties = [
-        //'required',
         'description',
         'type',
         'format',
@@ -56,6 +56,7 @@ var createJsonSchemaForSimpleValidationStrategy = function (parameterSpec) {
     });
     var out = _.merge({}, filtered);
     addSupportForNativeRegexp(out);
+    addSupportForItemsObject(out);
     return out;
 };
 
@@ -98,13 +99,23 @@ var createJsonSchemaForSimpleValidationStrategy = function (parameterSpec) {
  */
 var createValidatorForParameters = function (parameter, spec) {
 
-    var simpleValidatorSchema = createJsonSchemaForSimpleValidationStrategy(parameter);
-    logger.debug('Simple validator schema', JSON.stringify(simpleValidatorSchema, null, 2));
+    var path = parameter.path;
+    var name = parameter.name;
+    var inMethod = parameter.in;
+
+    var validationSchema;
+    if (inMethod === 'body') {
+        validationSchema = parameter.schema;
+    } else {
+        validationSchema = createJsonSchemaForSimpleValidationStrategy(parameter);
+    }
+
+    logger.debug('Simple validator schema', JSON.stringify(validationSchema, null, 2));
     var validator = new ZSchema();
-    var schemaValid = validator.validateSchema(simpleValidatorSchema);
+    var schemaValid = validator.validateSchema(validationSchema);
     if (!schemaValid) {
         var errors = validator.getLastErrors();
-        console.log(errors);
+        logger.debug('Schema not valid for input parameter %s %s', path, name);
         throw {
             msg: 'Schema not valid for input parameter',
             errors: errors
@@ -112,12 +123,10 @@ var createValidatorForParameters = function (parameter, spec) {
     }
 
     return function (value) {
-        var path = parameter.path;
-        var name = parameter.name;
         var required = parameter.required === undefined ? false : parameter.required;
 
         var out = [];
-        logger.debug('Validating %s: %j, required: %s', name, value, required);
+        logger.debug('Validating %s %s: %j, required: %s', path, name, value, required);
         if (value === undefined) {
             if (required) {
                 out.push({
@@ -129,7 +138,7 @@ var createValidatorForParameters = function (parameter, spec) {
             return out;
         }
         logger.debug("Validating by schema");
-        var valid = validator.validate(value, simpleValidatorSchema);
+        var valid = validator.validate(value, validationSchema);
         var schemaErrors = validator.getLastErrors();
         logger.debug('Exceptions', schemaErrors);
         if (schemaErrors != null) {

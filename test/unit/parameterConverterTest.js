@@ -6,35 +6,53 @@ define(function (require) {
 
     suite({
         'should convert to integer parameter': function () {
-            expect(parameterConverter.convertParameterObject('12345', {type:'integer', format:'int32'})).to.eql(12345);
+            expect(parameterConverter.convertParameterObject('12345', {
+                type: 'integer',
+                format: 'int32'
+            })).to.eql(12345);
         },
         'should convert to long parameter': function () {
-            expect(parameterConverter.convertParameterObject('12345', {type:'integer', format:'int64'})).to.eql(12345);
+            expect(parameterConverter.convertParameterObject('12345', {
+                type: 'integer',
+                format: 'int64'
+            })).to.eql(12345);
         },
         'should convert to float parameter': function () {
-            expect(parameterConverter.convertParameterObject('12.345', {type:'number', format:'float'})).to.eql(12.345);
+            expect(parameterConverter.convertParameterObject('12.345', {
+                type: 'number',
+                format: 'float'
+            })).to.eql(12.345);
         },
         'should convert to double parameter': function () {
-            expect(parameterConverter.convertParameterObject('12.345', {type:'number', format:'double'})).to.eql(12.345);
+            expect(parameterConverter.convertParameterObject('12.345', {
+                type: 'number',
+                format: 'double'
+            })).to.eql(12.345);
         },
         'should convert string parameter': function () {
-            expect(parameterConverter.convertParameterObject('abc', {type:'string'})).to.eql("abc");
+            expect(parameterConverter.convertParameterObject('abc', {type: 'string'})).to.eql("abc");
         },
         'should convert byte parameter': function () {
-            expect(parameterConverter.convertParameterObject('abc', {type:'string', format:'byte'})).to.eql("abc");
+            expect(parameterConverter.convertParameterObject('abc', {type: 'string', format: 'byte'})).to.eql("abc");
         },
         'should convert boolean parameter': function () {
-            expect(parameterConverter.convertParameterObject('true', {type:'boolean'})).to.eql(true);
+            expect(parameterConverter.convertParameterObject('true', {type: 'boolean'})).to.eql(true);
         },
         'should convert date parameter': function () {
-            expect(parameterConverter.convertParameterObject('2015-09-29', {type:'string', format:'date'})).to.eql(new Date('2015-09-29'));
+            expect(parameterConverter.convertParameterObject('2015-09-29', {
+                type: 'string',
+                format: 'date'
+            })).to.eql('2015-09-29');
         },
         'should convert dateTime parameter': function () {
-            expect(parameterConverter.convertParameterObject('2015-09-29T23:59:59', {type:'string', format:'date-time'})).to.eql(new Date('2015-09-29T23:59:59'));
+            expect(parameterConverter.convertParameterObject('2015-09-29T23:59:59', {
+                type: 'string',
+                format: 'date-time'
+            })).to.eql('2015-09-29T23:59:59');
         },
         'should throw exception when configuration not found': function () {
             try {
-                parameterConverter.convertParameterObject('abc', {type:'aaa', format:'bbb'});
+                parameterConverter.convertParameterObject('abc', {type: 'aaa', format: 'bbb'});
             } catch (e) {
                 expect(e).is.eql('Could not convert value: abc, for type: aaa, format: bbb, items: undefined, collectionFormat: undefined');
             }
@@ -94,7 +112,7 @@ define(function (require) {
                     collectionFormat: 'aaa'
                 });
                 expect.fail('expect exception to be thrown');
-            }catch(e){
+            } catch (e) {
                 expect(e).to.not.null;
             }
         },

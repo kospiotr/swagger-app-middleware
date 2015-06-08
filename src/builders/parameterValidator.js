@@ -48,7 +48,11 @@ var createJsonSchemaForSimpleValidationStrategy = function (parameterSpec) {
     var filtered = _.pick(parameterSpec, function (value, key, object) {
         return _.includes(allowdedSimpleValidationProperties, key);
     });
-    return _.merge({}, filtered);
+    var out = _.merge({}, filtered);
+    if (_.isRegExp(out.pattern)) {
+        out.pattern = out.pattern.source;
+    }
+    return out;
 };
 
 /**

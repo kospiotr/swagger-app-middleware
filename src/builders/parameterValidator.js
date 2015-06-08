@@ -19,6 +19,12 @@ var getParameterObjectsValidationErrors = function (actionInputParameters, opera
     return out;
 };
 
+var addSupportForNativeRegexp = function (out) {
+    if (_.isRegExp(out.pattern)) {
+        out.pattern = out.pattern.source;
+    }
+};
+
 /**
  * Creates JSON Schema for simple strategy (non JSON Schema or non query speciffic strategies)
  * This method will allow to use JSON Schema validation engine for validating simple values
@@ -49,9 +55,7 @@ var createJsonSchemaForSimpleValidationStrategy = function (parameterSpec) {
         return _.includes(allowdedSimpleValidationProperties, key);
     });
     var out = _.merge({}, filtered);
-    if (_.isRegExp(out.pattern)) {
-        out.pattern = out.pattern.source;
-    }
+    addSupportForNativeRegexp(out);
     return out;
 };
 

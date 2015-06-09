@@ -59,9 +59,6 @@ var convertNonBodyParameterObject = function (value, parameterSpec) {
     }
 
     if ('string' === type) {
-        //if ('date' === format || 'date-time' === format) {
-        //    return new Date(value);
-        //}
         if (format === undefined || 'byte' === format || 'password' === format) {
             return value;
         }
@@ -106,7 +103,7 @@ var convertArray = function (value, parameterSpec) {
     }
 
     for (var i = 0; i < array.length; i++) {
-        array[i] = convertParameterObject(array[i], items);
+        array[i] = convertNonBodyParameterObject(array[i], items);
         logger.debug('Converted array value', array[i]);
     }
 

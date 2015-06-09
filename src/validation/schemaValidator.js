@@ -10,6 +10,7 @@ var registerAdditionalFormats = function () {
         });
     });
 };
+
 registerAdditionalFormats();
 
 var validateSchema = function (data, schemas) {

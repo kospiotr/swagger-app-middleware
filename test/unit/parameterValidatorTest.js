@@ -79,6 +79,7 @@ define(function (require) {
                 description: true,
                 type: true,
                 format: true,
+                items: {},
                 default: true,
                 maximum: true,
                 exclusiveMaximum: true,
@@ -569,6 +570,7 @@ define(function (require) {
 
             expect(errors).is.empty;
         },
+
         'should validation fail when body in method and inline schema not valid': function () {
             var errors = validate([1234, 5678], {
                 name: 'id',
@@ -585,10 +587,156 @@ define(function (require) {
 
             expect(errors).is.not.empty;
             expect(errors[0].msg).is.eql("Expected type string but found type integer");
-        }
-
+        },
 
         //--------------- array
+        'should filter ItemObject parameters': function () {
+            var filtered = parameterValidator.filterItemsObjectParameters({
+                "type": "array",
+                "items": {
+                    "items": {
+                        "items": {
+                            "collectionFormat": "collectionFormat",
+                            'type': 'type',
+                            'format': 'format',
+                            'items': 'items',
+                            'default': 'default',
+                            'maximum': 'maximum',
+                            'exclusiveMaximum': 'exclusiveMaximum',
+                            'minimum': 'minimum',
+                            'exclusiveMinimum': 'exclusiveMinimum',
+                            'maxLength': 'maxLength',
+                            'minLength': 'minLength',
+                            'pattern': 'pattern',
+                            'maxItems': 'maxItems',
+                            'minItems': 'minItems',
+                            'uniqueItems': 'uniqueItems',
+                            'enum': 'enum',
+                            'multipleOf': 'multipleOf'
+                        },
+                        "collectionFormat": "collectionFormat",
+                        'type': 'type',
+                        'format': 'format',
+                        'default': 'default',
+                        'maximum': 'maximum',
+                        'exclusiveMaximum': 'exclusiveMaximum',
+                        'minimum': 'minimum',
+                        'exclusiveMinimum': 'exclusiveMinimum',
+                        'maxLength': 'maxLength',
+                        'minLength': 'minLength',
+                        'pattern': 'pattern',
+                        'maxItems': 'maxItems',
+                        'minItems': 'minItems',
+                        'uniqueItems': 'uniqueItems',
+                        'enum': 'enum',
+                        'multipleOf': 'multipleOf'
+                    },
+                    "collectionFormat": "collectionFormat",
+                    'type': 'type',
+                    'format': 'format',
+                    'default': 'default',
+                    'maximum': 'maximum',
+                    'exclusiveMaximum': 'exclusiveMaximum',
+                    'minimum': 'minimum',
+                    'exclusiveMinimum': 'exclusiveMinimum',
+                    'maxLength': 'maxLength',
+                    'minLength': 'minLength',
+                    'pattern': 'pattern',
+                    'maxItems': 'maxItems',
+                    'minItems': 'minItems',
+                    'uniqueItems': 'uniqueItems',
+                    'enum': 'enum',
+                    'multipleOf': 'multipleOf'
+                }
+            });
+
+            expect(filtered).is.not.empty;
+            expect(filtered.items.type).is.eql('type');
+            expect(filtered.items.format).is.eql('format');
+            expect(filtered.items.default).is.eql('default');
+            expect(filtered.items.maximum).is.eql('maximum');
+            expect(filtered.items.exclusiveMaximum).is.eql('exclusiveMaximum');
+            expect(filtered.items.minimum).is.eql('minimum');
+            expect(filtered.items.exclusiveMinimum).is.eql('exclusiveMinimum');
+            expect(filtered.items.maxLength).is.eql('maxLength');
+            expect(filtered.items.minLength).is.eql('minLength');
+            expect(filtered.items.pattern).is.eql('pattern');
+            expect(filtered.items.maxItems).is.eql('maxItems');
+            expect(filtered.items.minItems).is.eql('minItems');
+            expect(filtered.items.uniqueItems).is.eql('uniqueItems');
+            expect(filtered.items.enum).is.eql('enum');
+            expect(filtered.items.multipleOf).is.eql('multipleOf');
+
+            expect(filtered.items.items.type).is.eql('type');
+            expect(filtered.items.items.format).is.eql('format');
+            expect(filtered.items.items.default).is.eql('default');
+            expect(filtered.items.items.maximum).is.eql('maximum');
+            expect(filtered.items.items.exclusiveMaximum).is.eql('exclusiveMaximum');
+            expect(filtered.items.items.minimum).is.eql('minimum');
+            expect(filtered.items.items.exclusiveMinimum).is.eql('exclusiveMinimum');
+            expect(filtered.items.items.maxLength).is.eql('maxLength');
+            expect(filtered.items.items.minLength).is.eql('minLength');
+            expect(filtered.items.items.pattern).is.eql('pattern');
+            expect(filtered.items.items.maxItems).is.eql('maxItems');
+            expect(filtered.items.items.minItems).is.eql('minItems');
+            expect(filtered.items.items.uniqueItems).is.eql('uniqueItems');
+            expect(filtered.items.items.enum).is.eql('enum');
+            expect(filtered.items.items.multipleOf).is.eql('multipleOf');
+
+            expect(filtered.items.items.items.type).is.eql('type');
+            expect(filtered.items.items.items.format).is.eql('format');
+            expect(filtered.items.items.items.default).is.eql('default');
+            expect(filtered.items.items.items.maximum).is.eql('maximum');
+            expect(filtered.items.items.items.exclusiveMaximum).is.eql('exclusiveMaximum');
+            expect(filtered.items.items.items.minimum).is.eql('minimum');
+            expect(filtered.items.items.items.exclusiveMinimum).is.eql('exclusiveMinimum');
+            expect(filtered.items.items.items.maxLength).is.eql('maxLength');
+            expect(filtered.items.items.items.minLength).is.eql('minLength');
+            expect(filtered.items.items.items.pattern).is.eql('pattern');
+            expect(filtered.items.items.items.maxItems).is.eql('maxItems');
+            expect(filtered.items.items.items.minItems).is.eql('minItems');
+            expect(filtered.items.items.items.uniqueItems).is.eql('uniqueItems');
+            expect(filtered.items.items.items.enum).is.eql('enum');
+            expect(filtered.items.items.items.multipleOf).is.eql('multipleOf');
+
+            expect(filtered.items.collectionFormat).is.undefined;
+            expect(filtered.items.items.collectionFormat).is.undefined;
+            expect(filtered.items.items.items.collectionFormat).is.undefined;
+        },
+
+        'should validation pass when validating valid array': function () {
+            var errors = validate([10, 20], {
+                name: 'id',
+                path: '/action',
+                type: "array",
+                items: {
+                    type: "integer",
+                    minimum: 0,
+                    maximum: 63
+                }
+            });
+
+
+            expect(errors).is.empty;
+        },
+
+        'should validation fail when validating invalid array': function () {
+            var errors = validate([-10, 200], {
+                name: 'id',
+                path: '/action',
+                type: "array",
+                items: {
+                    type: "integer",
+                    minimum: 0,
+                    maximum: 63
+                }
+            });
+
+
+            expect(errors).is.not.empty;
+            expect(errors[0].msg).is.eql("Value 200 is greater than maximum 63");
+            expect(errors[1].msg).is.eql("Value -10 is less than minimum 0");
+        }
 
 
     });

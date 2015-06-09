@@ -18,14 +18,58 @@ var addSupportForNativeRegexp = function (out) {
     }
 };
 
-var addSupportForItemsObject = function (out) {
-    if(!_.has(out,'items')){
-        return;
-    }
+var itemObjectSupportedProperties = [
+    'type',
+    'format',
+    'items',
+    'default',
+    'maximum',
+    'exclusiveMaximum',
+    'minimum',
+    'exclusiveMinimum',
+    'maxLength',
+    'minLength',
+    'pattern',
+    'maxItems',
+    'minItems',
+    'uniqueItems',
+    'enum',
+    'multipleOf'
+];
 
-
-
+var filterItemsObjectParameters = function (itemsObject) {
+    var out = {};
+    _.forIn(itemsObject, function (value, key) {
+        if (_.includes(itemObjectSupportedProperties, key)) {
+            if (key === 'items') {
+                out.items = filterItemsObjectParameters(itemsObject.items);
+            } else {
+                out[key] = value;
+            }
+        }
+    });
+    return out;
 };
+
+var allowdedSimpleValidationProperties = [
+    'description',
+    'type',
+    'format',
+    'default',
+    'maximum',
+    'exclusiveMaximum',
+    'minimum',
+    'exclusiveMinimum',
+    'maxLength',
+    'minLength',
+    'pattern',
+    'maxItems',
+    'minItems',
+    'uniqueItems',
+    'enum',
+    'multipleOf'
+];
+
 /**
  * Creates JSON Schema for simple strategy (non JSON Schema or non query speciffic strategies)
  * This method will allow to use JSON Schema validation engine for validating simple values
@@ -33,30 +77,15 @@ var addSupportForItemsObject = function (out) {
  * @return validator
  */
 var createJsonSchemaForSimpleValidationStrategy = function (parameterSpec) {
-    var allowdedSimpleValidationProperties = [
-        'description',
-        'type',
-        'format',
-        'default',
-        'maximum',
-        'exclusiveMaximum',
-        'minimum',
-        'exclusiveMinimum',
-        'maxLength',
-        'minLength',
-        'pattern',
-        'maxItems',
-        'minItems',
-        'uniqueItems',
-        'enum',
-        'multipleOf'
-    ];
     var filtered = _.pick(parameterSpec, function (value, key, object) {
         return _.includes(allowdedSimpleValidationProperties, key);
     });
     var out = _.merge({}, filtered);
     addSupportForNativeRegexp(out);
-    addSupportForItemsObject(out);
+
+    if (_.has(parameterSpec, 'items')) {
+        out.items = filterItemsObjectParameters(parameterSpec.items);
+    }
     return out;
 };
 
@@ -140,9 +169,9 @@ var createValidatorForParameters = function (parameter, spec) {
         logger.debug("Validating by schema");
         var valid = validator.validate(value, validationSchema);
         var schemaErrors = validator.getLastErrors();
-        logger.debug('Exceptions', schemaErrors);
         if (schemaErrors != null) {
             _.forEach(schemaErrors, function (error, index) {
+                logger.debug('Exception', error.message);
 
                 out.push({
                     msg: error.message,
@@ -160,5 +189,6 @@ var createValidatorForParameters = function (parameter, spec) {
 module.exports = {
     createValidatorForParameters: createValidatorForParameters,
     getParameterObjectsValidationErrors: getParameterObjectsValidationErrors,
-    createJsonSchemaForSimpleValidationStrategy: createJsonSchemaForSimpleValidationStrategy
+    createJsonSchemaForSimpleValidationStrategy: createJsonSchemaForSimpleValidationStrategy,
+    filterItemsObjectParameters: filterItemsObjectParameters
 };

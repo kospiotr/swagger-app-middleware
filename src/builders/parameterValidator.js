@@ -134,12 +134,12 @@ var createValidatorForParameters = function (parameter, spec) {
 
     var validationSchema;
     if (inMethod === 'body') {
-        validationSchema = parameter.schema;
+        validationSchema = _.merge(parameter.schema, {definitions: spec.definitions});
     } else {
         validationSchema = createJsonSchemaForSimpleValidationStrategy(parameter);
     }
 
-    logger.debug('Simple validator schema', JSON.stringify(validationSchema, null, 2));
+    logger.debug('Simple validator schema %s', JSON.stringify(validationSchema, null, 2));
     var validator = new ZSchema();
     var schemaValid = validator.validateSchema(validationSchema);
     if (!schemaValid) {
@@ -149,6 +149,8 @@ var createValidatorForParameters = function (parameter, spec) {
             msg: 'Schema not valid for input parameter',
             errors: errors
         }
+    } else {
+        logger.debug('Schema valid');
     }
 
     return function (value) {

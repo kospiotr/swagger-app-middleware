@@ -3,11 +3,81 @@ define(function (require) {
     var parameterValidator = require('intern/dojo/node!../../src/builders/parameterValidator');
     var expect = require('intern/chai!expect');
     var logger = require('intern/dojo/node!winston');
+    var ZSchema = require("intern/dojo/node!z-schema");
+    var fs = require("intern/dojo/node!fs");
+    var _ = require("intern/dojo/node!lodash");
 
     logger.level = 'debug';
 
-    var validate = function (value, parameter, spec) {
-        var validator = parameterValidator.createValidatorForParameters(parameter, spec);
+    var schemaWithDefinitions = {
+        "definitions": {
+            "Pet": {
+                "discriminator": "petType",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "petType": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "petType"
+                ]
+            }
+        },
+        "Cat": {
+            "description": "A representation of a cat",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pet"
+                },
+                {
+                    "properties": {
+                        "huntingSkill": {
+                            "type": "string",
+                            "description": "The measured skill for hunting",
+                            "default": "lazy",
+                            "enum": [
+                                "clueless",
+                                "lazy",
+                                "adventurous",
+                                "aggressive"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "huntingSkill"
+                    ]
+                }
+            ]
+        },
+        "Dog": {
+            "description": "A representation of a dog",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pet"
+                },
+                {
+                    "properties": {
+                        "packSize": {
+                            "type": "integer",
+                            "format": "int32",
+                            "description": "the size of the pack the dog is from",
+                            "default": 0,
+                            "minimum": 0
+                        }
+                    },
+                    "required": [
+                        "packSize"
+                    ]
+                }
+            ]
+        }
+    };
+    var validate = function (value, parameter) {
+        var validator = parameterValidator.createValidatorForParameters(parameter, schemaWithDefinitions);
         return validator(value);
     };
 
@@ -550,45 +620,6 @@ define(function (require) {
             expect(errors[0].msg).is.eql("Value 15 is not a multiple of 10");
         },
 
-
-        //--------------- body in type
-
-
-        'should validation pass when body in method and inline schema valid': function () {
-            var errors = validate(['abc', 'cde'], {
-                name: 'id',
-                path: '/action',
-                in: 'body',
-                "schema": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            });
-
-
-            expect(errors).is.empty;
-        },
-
-        'should validation fail when body in method and inline schema not valid': function () {
-            var errors = validate([1234, 5678], {
-                name: 'id',
-                path: '/action',
-                in: 'body',
-                "schema": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            });
-
-
-            expect(errors).is.not.empty;
-            expect(errors[0].msg).is.eql("Expected type string but found type integer");
-        },
-
         //--------------- array
         'should filter ItemObject parameters': function () {
             var filtered = parameterValidator.filterItemsObjectParameters({
@@ -736,8 +767,75 @@ define(function (require) {
             expect(errors).is.not.empty;
             expect(errors[0].msg).is.eql("Value 200 is greater than maximum 63");
             expect(errors[1].msg).is.eql("Value -10 is less than minimum 0");
-        }
+        },
 
+        //--------------- body in type
+
+        'should validation pass when body in method and inline schema valid': function () {
+            var errors = validate(['abc', 'cde'], {
+                name: 'id',
+                path: '/action',
+                in: 'body',
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            });
+
+
+            expect(errors).is.empty;
+        },
+
+        'should validation fail when body in method and inline schema not valid': function () {
+            var errors = validate([1234, 5678], {
+                name: 'id',
+                path: '/action',
+                in: 'body',
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            });
+
+
+            expect(errors).is.not.empty;
+            expect(errors[0].msg).is.eql("Expected type string but found type integer");
+        },
+
+        'should validation pass when body in method and reference schema valid': function () {
+
+            var errors = validate({
+                name: 'MyName',
+                petType: 'Dog'
+            }, {
+                name: 'id',
+                path: '/action',
+                in: "body",
+                schema: {'$ref': '#/definitions/Pet'}
+            }, schemaWithDefinitions);
+
+
+            expect(errors).is.empty;
+        },
+
+        'should validation fail when body in method and reference schema not valid': function () {
+
+            var errors = validate({}, {
+                name: 'id',
+                path: '/action',
+                in: "body",
+                schema: {'$ref': '#/definitions/Pet'}
+            }, schemaWithDefinitions);
+
+
+            expect(errors).is.not.empty;
+            expect(errors[0].msg).is.eql("Missing required property: petType");
+            expect(errors[1].msg).is.eql("Missing required property: name");
+        }
 
     });
 });
